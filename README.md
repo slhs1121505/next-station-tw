@@ -1,3 +1,15 @@
+# Next Station, TW | 下一站，隨機
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/user-attachments/assets/b3a4a0c8-e21e-451e-8260-84c489da1b15/ticket.png" alt="Generated Ticket" width="300"/>
+</p>
+
+<p align="center">
+  A minimalist web app for spontaneous railway adventures across Taiwan.
+  <br />
+  <a href="https://[Your-GitHub-Username].github.io/[Your-Repo-Name]/"><strong>View Live Demo »</strong></a>
+</p>
+
 ---
 
 ## About The Project
@@ -33,3 +45,25 @@ This project was built with modern web technologies, focusing on a clean codebas
 ## Getting Started
 
 To get a local copy up and running, follow these simple steps.
+
+### Prerequisites
+
+You only need a modern web browser. No complex dependencies are required.
+
+### Installation
+
+1.  Clone the repository:
+    ```sh
+    git clone [https://github.com/](https://github.com/)[Your-GitHub-Username]/[Your-Repo-Name].git
+    ```
+2.  Open `index.html` in your browser.
+
+That's it! You're ready to start your random journey.
+
+---
+
+## Contact
+
+Created by **張子夫 (ztf.411)**
+
+Project Link: [https://github.com/[Your-GitHub-Username]/[Your-Repo-Name]](https://github.com/[Your-GitHub-Username]/[Your-Repo-Name])
