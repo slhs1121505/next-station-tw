@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台灣車站抽籤 - 隨機目的地</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2d3748;
+            --primary-dark: #1a202c;
+            --secondary: #718096;
+            --surface: #ffffff;
+            --surface-alt: #f7fafc;
+            --border: #e2e8f0;
+            --text: #1a202c;
+            --text-light: #4a5568;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background-color: var(--surface-alt);
+            min-height: 100vh;
+            line-height: 1.6;
+            color: var(--text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        body.lottery-active .background-pattern {
+            animation: pan 20s linear infinite;
+        }
+
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            z-index: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="20" fill="transparent"/><circle cx="4" cy="4" r="1" fill="%231a202c"/></svg>');
+        }
+        
+        @keyframes pan {
+            from { transform: translate(0, 0); }
+            to { transform: translate(-20px, -20px); }
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .title {
+            font-size: clamp(2.8rem, 8vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.04em;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: var(--text-light);
+            font-weight: 400;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .main-card {
+            background: var(--surface);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            margin-bottom: 2.5rem;
+            transition: filter 0.5s ease-out, transform 0.5s ease-out;
+        }
+
+        .input-section {
+            padding: 2.5rem;
+        }
+
+        .input-label {
+            display: block;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1.5rem;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            background: var(--surface-alt);
+            transition: all 0.3s ease;
+            font-family: inherit;
+            text-align: center;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface);
+            box-shadow: 0 0 0 4px rgba(45, 55, 72, 0.05);
+        }
+        
+        .lottery-section {
+            padding: 1.5rem 2.5rem 2.5rem;
+            text-align: center;
+            background-color: var(--surface-alt);
+            border-top: 1px solid var(--border);
+        }
+
+        .draw-button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 1.25rem 2.5rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            font-family: inherit;
+            min-width: 220px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .draw-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: -1;
+        }
+
+        .draw-button:hover::after {
+            left: 150%;
+        }
+
+        .draw-button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .draw-button:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .draw-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            display: inline-block;
+            vertical-align: middle;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.75rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .lottery-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 32, 44, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .lottery-wheel-container {
+            width: 100%;
+            height: 150px;
+            overflow: hidden;
+            position: relative;
+            -webkit-mask-image: linear-gradient(to right, transparent, black 25%, black 75%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 25%, black 75%, transparent);
+        }
+
+        .lottery-wheel {
+            display: flex;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .wheel-station {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--surface);
+            padding: 0 2rem;
+            flex-shrink: 0;
+            letter-spacing: -0.02em;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            opacity: 0.7;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: scale(0.8);
+        }
+
+        .wheel-selector {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 100px;
+            border: 3px solid white;
+            border-radius: 16px;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+        }
+        
+        .result-display {
+            padding: 3rem 1.5rem;
+            text-align: center;
+            display: none;
+        }
+
+        .result-title {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        
+        .result-station-name-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .result-station-name {
+            font-size: clamp(2.8rem, 9vw, 3.5rem);
+            font-weight: 900;
+            color: var(--primary-dark);
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        
+        .underline-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .underline-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-dark);
+            border-radius: 50%;
+        }
+
+        .underline-line {
+            width: 100%;
+            height: 3px;
+            background: var(--primary-dark);
+            transform: scaleX(0);
+            transform-origin: center;
+        }
+
+        .ticket-container {
+            margin-top: 1.5rem;
+            opacity: 0;
+            transform: translateY(30px);
+            perspective: 1000px;
+        }
+
+        .ticket {
+            background: var(--primary-dark);
+            border-radius: 20px;
+            padding: 1.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            max-width: 320px;
+            margin: 0 auto;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .ticket-bg {
+            position: absolute;
+            top:0; left:0; width: 100%; height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="dlines" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 5h10" stroke="%23fff" stroke-width="0.5" stroke-opacity="0.05"/></pattern></defs><rect width="100%" height="100%" fill="url(%23dlines)"/></svg>');
+            opacity: 0.5;
+        }
+        
+        .ticket-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .ticket-header, .route-section, .ticket-footer {
+             opacity: 0;
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .ticket-title-group {
+            text-align: left;
+        }
+
+        .ticket-title {
+            font-size: 1rem;
+            font-weight: 700;
+            opacity: 0.9;
+            letter-spacing: 0.1em;
+        }
+
+        .ticket-subtitle {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            letter-spacing: 0.05em;
+        }
+
+        .ticket-date {
+            font-size: 1rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+        }
+
+        .route-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .station {
+            width: 100%;
+            text-align: center;
+        }
+
+        .station-label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .station-name {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            padding: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .route-divider {
+            width: 2px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.4);
+            margin: 0.75rem 0;
+        }
+
+        .ticket-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .ticket-id {
+            font-size: 0.75rem;
+            opacity: 0.5;
+            font-family: 'Courier New', monospace;
+        }
+
+        .download-section {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .download-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .download-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 3rem 1rem 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-light);
+            line-height: 1.8;
+            border-top: 1px solid var(--border);
+            transition: filter 0.5s ease-out, transform 0.5s ease-out;
+        }
+        
+        .dim-background .main-card,
+        .dim-background .header,
+        .dim-background .footer,
+        .dim-background .ticket-container {
+           filter: blur(8px);
+           transform: scale(0.98);
+        }
+
+        @media (max-width: 640px) {
+            .container { padding: 2rem 1rem; }
+            .input-section { padding: 2rem 1.5rem; }
+            .lottery-section { padding: 1.5rem; }
+            .ticket { padding: 1.5rem; max-width: 280px; }
+            .station-name { font-size: 1.75rem; }
+            .wheel-station { font-size: 2.5rem; }
+            .wheel-selector { width: 150px; height: 80px;}
+        }
+    </style>
+</head>
+<body>
+    <div class="background-pattern"></div>
+    
+    <div class="container" id="mainContainer">
+        <div class="header">
+            <h1 class="title">台灣車站抽籤</h1>
+            <p class="subtitle">讓隨機決定你的下一個目的地</p>
+        </div>
+
+        <div class="main-card">
+            <div class="input-section">
+                <label class="input-label" for="startStation">起點車站</label>
+                <input 
+                    type="text" 
+                    class="input-field" 
+                    id="startStation" 
+                    autocomplete="off"
+                >
+            </div>
+            <div class="result-display" id="resultDisplay">
+                 <p class="result-title">您的目的地是</p>
+                 <div class="result-station-name-wrapper">
+                    <h2 class="result-station-name" id="resultStationName"></h2>
+                    <div class="underline-container" id="underlineContainer">
+                       <div class="underline-dot"></div>
+                       <div class="underline-line"></div>
+                       <div class="underline-dot"></div>
+                    </div>
+                 </div>
+            </div>
+            <div class="lottery-section">
+                <button class="draw-button" id="drawButton">
+                    開始抽籤
+                </button>
+            </div>
+        </div>
+
+        <div class="ticket-container" id="ticketContainer">
+            <div class="ticket" id="ticket">
+                <div class="ticket-bg"></div>
+                <div class="ticket-content">
+                    <div class="ticket-header">
+                        <div class="ticket-title-group">
+                            <div class="ticket-title">TAIWAN RAILWAY</div>
+                            <div class="ticket-subtitle">隨機單程票券</div>
+                        </div>
+                        <div class="ticket-date" id="ticketDate"></div>
+                    </div>
+                    
+                    <div class="route-section">
+                        <div class="station">
+                            <div class="station-label">FROM</div>
+                            <div class="station-name" id="fromStation">-</div>
+                        </div>
+                        <div class="route-divider"></div>
+                        <div class="station">
+                            <div class="station-label">TO</div>
+                            <div class="station-name" id="toStation">-</div>
+                        </div>
+                    </div>
+
+                    <div class="ticket-footer">
+                        <div class="ticket-id" id="ticketId"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="download-section">
+                <button class="download-button" id="downloadButton">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                    </svg>
+                    下載車票
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        本網站由張子夫製作<br>
+        靈感來自於 Dcard 原創節目《電車吃漢》<br>
+        若您發現有車站遺漏，歡迎透過 Instagram（@ztf.411）與我聯繫
+    </div>
+
+    <div class="lottery-overlay" id="lotteryOverlay">
+        <div class="lottery-wheel-container">
+            <div class="lottery-wheel" id="lotteryWheel"></div>
+        </div>
+        <div class="wheel-selector"></div>
+    </div>
+
+    <script>
+        const stations = [
+            '八堵', '八斗子', '百福', '白沙屯', '拔林', '板橋', '保安', '北埔', '北新竹', '北湖', '北回',
+            '平和', '屏東', '平溪', '埔心',
+            '苗栗', '民雄', '民族', '牡丹', '美術館',
+            '枋寮', '枋山', '枋野', '豐富', '鳳林', '鳳山', '豐田', '豐原', '富岡', '富貴', '富里', '福隆', '富源', '浮洲',
+            '大村', '大肚', '大肚溪南', '大富', '大華', '大甲', '大里', '大林', '大山', '大橋', '大慶', '大武', '大溪', '大湖', '頂埔', '東澳', '東海', '東里', '冬山', '東竹', '斗六', '斗南',
+            '泰安', '泰安舊', '臺中', '臺中港', '太麻里', '臺南', '臺北', '臺東', '太原', '談文', '談文南', '潭子', '桃園', '田中', '銅鑼', '通霄', '頭城', '頭家厝',
+            '南澳', '南港', '南樹林', '南靖', '南台南', '南科', '南平', '南勢', '南州', '楠梓', '內壢', '內獅', '內灣', '內惟', '暖暖',
+            '林邊', '林鳳營', '林森', '林榮新光', '嶺腳', '麟洛', '林內', '六家', '六塊厝', '柳營', '栗林', '龍港', '龍井', '龍泉', '隆田', '瀧溪', '羅東', '鹿野', '路竹',
+            '岡山', '高雄', '貢寮', '光復', '關山', '歸來', '龜山', '鼓山',
+            '崁頂', '康樂', '科工館',
+            '海端', '漢本', '橫山', '和平', '合興', '後壁', '后里', '後龍', '猴硐', '後庄', '花蓮', '花蓮港', '花壇', '湖口', '海科館',
+            '嘉北', '吉安', '佳冬', '加祿', '礁溪', '嘉義', '集集', '基隆', '景美', '菁桐', '精武', '金崙', '九曲堂', '九讚頭',
+            '橋頭', '崎頂', '七堵', '清水', '千甲', '前鎮',
+            '香山', '汐科', '新城（太魯閣）', '新豐', '新馬', '新埔', '新市', '新烏日', '新營', '新竹', '新左營', '新莊', '新富', '西勢', '汐止',
+            '彰化', '鎮安', '知本', '志學', '中壢', '中里', '中洲', '中央', '竹北', '竹東', '追分', '竹南', '濁水', '竹田', '竹中', '正義',
+            '長榮大學', '長良', '潮州', '車埕', '成功', '池上', '崇德',
+            '沙崙', '沙鹿', '上員', '善化', '山佳', '山里', '社頭', '石城', '十分', '石龜', '石榴', '壽豐', '雙溪', '水里', '水上', '樹林',
+            '日南', '榮華', '瑞芳', '瑞和', '瑞穗', '瑞源', '仁德',
+            '造橋', '左營（舊城）',
+            '三貂嶺', '三坑', '三民', '三姓橋', '三義', '三塊厝', '四城', '四腳亭', '松山', '蘇澳', '蘇澳新', '松竹',
+            '楊梅', '宜蘭', '鶯歌',
+            '外澳', '望古', '萬華', '萬榮', '五堵', '五權', '烏日', '武塔',
+            '永靖', '永康', '永康工業區', '永樂', '苑裡', '員林', '源泉', '玉里',
+            '二結', '二水'
+        ];
+
+        let isDrawing = false;
+        
+        const drawButton = document.getElementById('drawButton');
+        const startStationInput = document.getElementById('startStation');
+        const lotteryOverlay = document.getElementById('lotteryOverlay');
+        const lotteryWheel = document.getElementById('lotteryWheel');
+        const body = document.body;
+        const resultDisplay = document.getElementById('resultDisplay');
+        const resultStationName = document.getElementById('resultStationName');
+        const underlineLine = document.querySelector('.underline-line');
+        const underlineDots = document.querySelectorAll('.underline-dot');
+
+        function init() {
+            gsap.from('.header', { duration: 1.2, y: -50, opacity: 0, ease: 'power3.out' });
+            gsap.from('.main-card', { duration: 1.2, y: 50, opacity: 0, delay: 0.3, ease: 'power3.out' });
+            gsap.from('.footer', { duration: 1, y: 30, opacity: 0, delay: 0.6, ease: 'power3.out' });
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startDraw() {
+            const startStation = startStationInput.value.trim();
+            if (!startStation) {
+                alert('請先輸入起點車站');
+                return;
+            }
+            if (isDrawing) return;
+            
+            isDrawing = true;
+            drawButton.disabled = true;
+            drawButton.innerHTML = `<span class="spinner"></span>抽籤中`;
+            body.classList.add('dim-background', 'lottery-active');
+            
+            gsap.to(lotteryOverlay, { opacity: 1, duration: 0.5, onComplete: () => lotteryOverlay.style.pointerEvents = 'auto' });
+
+            const repeatedStations = shuffleArray([...stations, ...stations, ...stations, ...stations, ...stations]);
+            lotteryWheel.innerHTML = '';
+            repeatedStations.forEach(station => {
+                const div = document.createElement('div');
+                div.className = 'wheel-station';
+                div.textContent = station;
+                lotteryWheel.appendChild(div);
+            });
+            
+            const stationElements = lotteryWheel.querySelectorAll('.wheel-station');
+            const targetIndex = Math.floor(Math.random() * (stations.length)) + (stations.length * 3);
+            const targetElement = stationElements[targetIndex];
+            const wheelContainerWidth = lotteryWheel.parentElement.offsetWidth;
+            const targetPosition = targetElement.offsetLeft + targetElement.offsetWidth / 2;
+            const targetX = -(targetPosition - wheelContainerWidth / 2);
+
+            gsap.set(lotteryWheel, { x: 0 });
+            gsap.to(lotteryWheel, {
+                x: targetX,
+                duration: 10,
+                ease: 'power3.inOut',
+                onUpdate: () => {
+                    const wheelCenter = -gsap.getProperty(lotteryWheel, "x") + wheelContainerWidth / 2;
+                    stationElements.forEach(el => {
+                        const elCenter = el.offsetLeft + el.offsetWidth / 2;
+                        const distance = Math.abs(wheelCenter - elCenter);
+                        const scale = Math.max(0.8, 1 - distance / wheelContainerWidth);
+                        const opacity = Math.max(0.5, 1 - distance / (wheelContainerWidth));
+                        gsap.set(el, { scale: scale, opacity: opacity });
+                    });
+                },
+                onComplete: () => {
+                    showResult(startStation, targetElement.textContent);
+                }
+            });
+        }
+        
+        function showResult(startStation, selectedStation) {
+            gsap.to(lotteryOverlay, { opacity: 0, duration: 0.5, onComplete: () => lotteryOverlay.style.pointerEvents = 'none' });
+            body.classList.remove('dim-background', 'lottery-active');
+
+            resultStationName.textContent = selectedStation;
+            
+            gsap.set(resultDisplay, { display: 'block', opacity: 0, y: 20 });
+            gsap.set(underlineLine, { scaleX: 0 });
+            gsap.set(underlineDots, { scale: 0 });
+
+            gsap.to(resultDisplay, { 
+                opacity: 1, 
+                y: 0, 
+                duration: 0.6, 
+                ease: 'power2.out',
+                onComplete: () => {
+                    const tl = gsap.timeline();
+                    tl.to(underlineLine, { scaleX: 1, duration: 0.6, ease: 'expo.out' })
+                      .to(underlineDots, { scale: 1, duration: 0.5, ease: 'back.out(2)' });
+                }
+            });
+
+            generateTicket(startStation, selectedStation);
+
+            drawButton.disabled = false;
+            drawButton.textContent = '重新抽籤';
+            isDrawing = false;
+        }
+
+        function generateTicket(start, end) {
+            const now = new Date();
+            const ticketContainer = document.getElementById('ticketContainer');
+            
+            const dateStr = now.getFullYear() + '.' + 
+                           String(now.getMonth() + 1).padStart(2, '0') + '.' + 
+                           String(now.getDate()).padStart(2, '0');
+            
+            document.getElementById('ticketDate').textContent = dateStr;
+            document.getElementById('ticketId').textContent = 'ID: ' + 
+                Math.random().toString(36).substr(2, 12).toUpperCase();
+            
+            document.getElementById('fromStation').textContent = start;
+            document.getElementById('toStation').textContent = end;
+            
+            gsap.set(ticketContainer, { opacity: 0, y: 30 });
+            gsap.set(".ticket", { transform: 'rotateX(-20deg) rotateY(10deg) scale(0.95)', opacity: 0});
+            gsap.set(".ticket-header, .route-section, .ticket-footer", { opacity: 0, y: 15 });
+
+            const tl = gsap.timeline({ defaults: { ease: "power3.out" }});
+
+            tl.to(ticketContainer, {
+                duration: 0.8,
+                opacity: 1,
+                y: 0,
+                delay: 1.2
+            }).to(".ticket", {
+                 transform: 'rotateX(0deg) rotateY(0deg) scale(1)',
+                 opacity: 1,
+                 duration: 0.8
+            }, "-=0.5")
+            .to(".ticket-header", { opacity: 1, y: 0, duration: 0.5 }, "-=0.2")
+            .to(".route-section", { opacity: 1, y: 0, duration: 0.5 }, "-=0.3")
+            .to(".ticket-footer", { opacity: 1, y: 0, duration: 0.5 }, "-=0.3");
+        }
+
+        function downloadTicket() {
+            const ticketNode = document.getElementById('ticket');
+            const downloadSection = document.querySelector('.download-section');
+            
+            downloadSection.style.visibility = 'hidden';
+            
+            html2canvas(ticketNode, {
+                backgroundColor: null,
+                scale: 3,
+                useCORS: true,
+                logging: false,
+            }).then(canvas => {
+                downloadSection.style.visibility = 'visible';
+                const link = document.createElement('a');
+                link.download = `Taiwan-Railway-Ticket-${new Date().getTime()}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            }).catch(err => {
+                 downloadSection.style.visibility = 'visible';
+                 console.error("oops, something went wrong!", err);
+            });
+        }
+
+        drawButton.addEventListener('click', startDraw);
+        document.getElementById('downloadButton').addEventListener('click', downloadTicket);
+        startStationInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                startDraw();
+            }
+        });
+
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
