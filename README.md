@@ -1,69 +1,37 @@
-# Next Station, TW | 下一站，隨機
+# 台灣車站抽籤 - 隨機目的地
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/user-attachments/assets/b3a4a0c8-e21e-451e-8260-84c489da1b15/ticket.png" alt="Generated Ticket" width="300"/>
-</p>
+## 關於這個專案 (About The Project)
 
-<p align="center">
-  A minimalist web app for spontaneous railway adventures across Taiwan.
-  <br />
-  <a href="https://[Your-GitHub-Username].github.io/[Your-Repo-Name]/"><strong>View Live Demo »</strong></a>
-</p>
+下一站，要去哪裡？
+
+這個專案是為了一場說走就走的旅行而設計。靈感來自 Dcard 節目《電車吃漢》以及無計畫旅行的單純樂趣，這個應用程式會從台灣龐大的鐵路網中，隨機選擇一個車站作為你的下一個目的地。
+
+整個體驗專注於乾淨、極簡的設計與流暢的動畫，並在最後為每趟旅程產生一張獨一無二、可供下載分享的精美車票。
 
 ---
 
-## About The Project
+## 主要功能 (Key Features)
 
-Where will the rails take you next?
-
-This project is a digital experience designed for the spontaneous traveler. Inspired by the Dcard show "電車吃漢" and the simple joy of an unplanned journey, this application randomly selects a train station from Taiwan's extensive railway network to be your next destination.
-
-The experience focuses on a clean, minimalist design with smooth animations, culminating in a unique, beautifully crafted ticket that you can download and share to commemorate the start of your new adventure.
-
-### Key Features
-
-* **Random Destination Generator**: Enter your starting point and let fate decide your destination.
-* **Interactive Lottery Animation**: A sleek, horizontal lottery wheel provides a satisfying reveal.
-* **Generative Ticket**: Receive a unique, beautifully designed "ticket" for every journey.
-* **Download & Share**: Save your ticket as a high-quality PNG image.
-* **Responsive Design**: A mobile-first experience that is elegant and functional on all devices.
+* **隨機目的地產生器**：輸入你的起點，讓命運決定你的下一站。
+* **互動式抽籤動畫**：流暢的水平滾輪動畫，提供充滿期待感的揭曉過程。
+* **生成式紀念車票**：為每一趟旅程，產生獨一無二的精美車票。
+* **下載與分享**：可將你的專屬車票儲存為高畫質 PNG 圖片。
+* **響應式設計**：以行動裝置為優先，在所有設備上都提供優雅且實用的體驗。
 
 ---
 
-## Built With
+## 使用技術 (Built With)
 
-This project was built with modern web technologies, focusing on a clean codebase and a great user experience.
+此專案使用現代網頁技術建構，專注於簡潔的程式碼與優質的使用者體驗。
 
 * **HTML5**
-* **CSS3** (with CSS Variables and Flexbox)
+* **CSS3** (使用 CSS 變數與 Flexbox)
 * **JavaScript (ES6+)**
-* **GSAP (GreenSock Animation Platform)**: For all animations and transitions.
-* **html2canvas**: For generating the downloadable ticket image.
+* **GSAP (GreenSock Animation Platform)**：用於所有動畫與過渡效果。
+* **html2canvas**: 用於生成可下載的車票圖片。
 
 ---
 
-## Getting Started
+## 聯絡方式
 
-To get a local copy up and running, follow these simple steps.
-
-### Prerequisites
-
-You only need a modern web browser. No complex dependencies are required.
-
-### Installation
-
-1.  Clone the repository:
-    ```sh
-    git clone [https://github.com/](https://github.com/)[Your-GitHub-Username]/[Your-Repo-Name].git
-    ```
-2.  Open `index.html` in your browser.
-
-That's it! You're ready to start your random journey.
-
----
-
-## Contact
-
-Created by **張子夫 (ztf.411)**
-
-Project Link: [https://github.com/[Your-GitHub-Username]/[Your-Repo-Name]](https://github.com/[Your-GitHub-Username]/[Your-Repo-Name])
+由 **(張子夫)[https://github.com/slhs1121505/]** 製作
