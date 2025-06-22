@@ -667,6 +667,26 @@
                 lotteryWheel.appendChild(div);
             });
             
+            lotteryWheel.querySelectorAll('.wheel-station').forEach(el => {
+                const textLength = el.textContent.length;
+                let fontSize;
+                
+                const isMobile = window.innerWidth <= 640;
+
+                if (isMobile) {
+                    if (textLength >= 5) { fontSize = '1.6rem'; } 
+                    else if (textLength === 4) { fontSize = '1.9rem'; } 
+                    else if (textLength === 3) { fontSize = '2.2rem'; } 
+                    else { fontSize = '2.5rem'; }
+                } else {
+                    if (textLength >= 5) { fontSize = '2.0rem'; } 
+                    else if (textLength === 4) { fontSize = '2.4rem'; } 
+                    else if (textLength === 3) { fontSize = '2.7rem'; } 
+                    else { fontSize = '3rem'; }
+                }
+                el.style.fontSize = fontSize;
+            });
+            
             const stationElements = lotteryWheel.querySelectorAll('.wheel-station');
             const targetIndex = Math.floor(Math.random() * (stations.length)) + (stations.length * 3);
             const targetElement = stationElements[targetIndex];
