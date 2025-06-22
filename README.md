@@ -1,4 +1,4 @@
-# 台灣車站抽籤 - 隨機目的地
+# [台灣車站抽籤 - 隨機目的地](https://slhs1121505.github.io/next-station-tw/)
 
 ## 關於這個專案 (About The Project)
 
