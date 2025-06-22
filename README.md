@@ -2,10 +2,8 @@
 
 ## 關於這個專案 (About The Project)
 
-> “Twenty years from now you will be more disappointed by the things that you didn’t do than by the ones you did do.  
-> So throw off the bowlines. Sail away from the safe harbor.  
-> Catch the trade winds in your sails. Explore. Dream. Discover.”  
-> — *Mark Twain*
+> “The world is a book, and those who do not travel read only one page.”  
+> — *Saint Augustine*
 
 這個專案是為了一場說走就走的旅行而設計。靈感來自 Dcard 節目《電車吃漢》以及無計畫旅行的單純樂趣，這個應用程式會從台灣龐大的鐵路網中，隨機選擇一個車站作為你的下一個目的地。
 
