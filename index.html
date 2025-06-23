@@ -759,25 +759,31 @@
             document.getElementById('fromStation').textContent = start;
             document.getElementById('toStation').textContent = end;
             
-            gsap.set(ticketContainer, { opacity: 0, y: 30 });
-            gsap.set(".ticket", { transform: 'rotateX(-20deg) rotateY(10deg) scale(0.95)', opacity: 0});
-            gsap.set(".ticket-header, .route-section, .ticket-footer", { opacity: 0, y: 15 });
+            // --- MODIFICATION START ---
+            // 1. 設定初始狀態
+            gsap.set(ticketContainer, { opacity: 0, y: 50 }); // 容器從下方更遠處開始
+            gsap.set(".ticket", { transform: 'rotateX(-90deg)', transformOrigin: 'top center', opacity: 0 }); // 車票從頂部翻轉
+            gsap.set([".ticket-header", ".route-section", ".ticket-footer"], { opacity: 0, y: 25 }); // 內容從下方開始
 
-            const tl = gsap.timeline({ defaults: { ease: "power3.out" }});
+            // 2. 建立動畫時間軸
+            const tl = gsap.timeline({ defaults: { ease: "power2.out" }});
 
             tl.to(ticketContainer, {
                 duration: 0.8,
                 opacity: 1,
                 y: 0,
-                delay: 1.2
-            }).to(".ticket", {
-                 transform: 'rotateX(0deg) rotateY(0deg) scale(1)',
+                delay: 1.2 // 結果顯示後延遲一會再出現
+            })
+            .to(".ticket", {
+                 transform: 'rotateX(0deg)',
                  opacity: 1,
-                 duration: 0.8
-            }, "-=0.5")
-            .to(".ticket-header", { opacity: 1, y: 0, duration: 0.5 }, "-=0.2")
-            .to(".route-section", { opacity: 1, y: 0, duration: 0.5 }, "-=0.3")
-            .to(".ticket-footer", { opacity: 1, y: 0, duration: 0.5 }, "-=0.3");
+                 duration: 1,
+                 ease: 'elastic.out(1, 0.75)', // 帶有回彈效果的物理動畫
+            }, "-=0.5") // 與容器動畫重疊播放
+            .to(".ticket-header", { opacity: 1, y: 0, duration: 0.5 }, "-=0.6") // 在票券快到位時開始
+            .to(".route-section", { opacity: 1, y: 0, duration: 0.5 }, "<0.2") // 比上一個動畫晚 0.2 秒
+            .to(".ticket-footer", { opacity: 1, y: 0, duration: 0.5 }, "<0.2"); // 再比上一個動畫晚 0.2 秒
+            // --- MODIFICATION END ---
         }
 
         function downloadTicket() {
